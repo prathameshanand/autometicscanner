@@ -4,64 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XSS Scanner</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background: #fff;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .error {
-            color: red;
-        }
-        .success {
-            color: green;
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script>
         function showAlert(message) {
             alert(message);
@@ -69,9 +13,8 @@
     </script>
 </head>
 <body>
-    <h1>XSS Scanner</h1>
+    <h1>Common Vulnerability Scanner</h1>
 
-    <!-- Display any error messages -->
     {% if messages %}
         <ul>
         {% for message in messages %}
@@ -87,16 +30,64 @@
         <button type="submit">Scan</button>
     </form>
 
-    <!-- Display results if available -->
-    {% if results %}
-        <h2>Scan Results for {{ url }}</h2>
-        <ul>
-        {% for result in results %}
-            <li>
-                {{ result.type }} - {{ result.status }} with payload: {{ result.payload }}
-            </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+    <div style="display: flex; justify-content: space-between;">
+        <div style="width: 45%;">
+            {% if results %}
+                <h2>Scan Results for {{ url }}</h2>
+                <ul>
+                    <li><strong>Metadata:</strong>
+                        <ul>
+                            <li>Title: {{ results.Metadata.Title|default:"No title available" }}</li>
+                            <li>Description: {{ results.Metadata.Description|default:"No description" }}</li>
+                            <li>Keywords: {{ results.Metadata.Keywords|default:"No keywords" }}</li>
+                        </ul>
+                    </li>
+                    <li><strong>Domain:</strong> {{ results.Domain|default:"No domain info available" }}</li>
+                    <li><strong>IP:</strong> {{ results.IP|default:"No IP address found" }}</li>
+                    <li><strong>Technology:</strong> {{ results.Technology|default:"No technology stack found" }}</li>
+                    <li><strong>SSL:</strong> {{ results.SSL|default:"No SSL certificate found" }}</li>
+                    <li><strong>Performance:</strong> {{ results.Performance|default:"No performance metrics found" }}</li>
+                    <li><strong>Content:</strong> {{ results.Content|default:"No content analysis found" }}</li>
+                    <li><strong>Security:</strong> {{ results.Security|default:"No security features found" }}</li>
+                    <li><strong>Geo:</strong> {{ results.Geo|default:"No geolocation found" }}</li>
+                    <li><strong>Robots:</strong> {{ results.Robots|default:"No robots.txt found" }}</li>
+                    <li><strong>Sitemap:</strong> {{ results.Sitemap|default:"No sitemap.xml found" }}</li>
+                    <li><strong>WordPress Detection:</strong> {{ results.WordPress|default:"No WordPress detected" }}</li>
+                    <li><strong>Social:</strong> {{ results.Social|default:"No social media links found" }}</li>
+                    <li><strong>Backlinks:</strong> {{ results.Backlinks|default:"No backlinks or authority found" }}</li>
+                </ul>
+            {% endif %}
+        </div>
+
+        <div style="width: 45%;">
+            {% if finder_results %}
+                <h2>Finder Results</h2>
+                <h3>Valid Matches</h3>
+                <ul>
+                    {% for key, matches in finder_results.valid_matches.items %}
+                        <li><strong>{{ key }}:</strong>
+                            <ul>
+                                {% for match in matches %}
+                                    <li>{{ match }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <h3>Unvalidated Matches</h3>
+                <ul>
+                    {% for key, matches in finder_results.unvalidated_matches.items %}
+                        <li><strong>{{ key }}:</strong>
+                            <ul>
+                                {% for match in matches %}
+                                    <li>{{ match }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
